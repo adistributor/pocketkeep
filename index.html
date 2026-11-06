@@ -1,1 +1,405 @@
-PocketKeep coming soon
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PocketKeep — expense tracker that keeps your data on your phone</title>
+<meta name="description" content="PocketKeep is a simple expense tracker for Android. It works offline, needs no account, and has no ads. Your data stays on your phone.">
+<link rel="canonical" href="https://adistributor.github.io/pocketkeep/">
+<meta property="og:title" content="PocketKeep">
+<meta property="og:description" content="A simple expense tracker that keeps your data on your phone. No account. No ads.">
+<meta property="og:url" content="https://adistributor.github.io/pocketkeep/">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#1E1E2E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%235B4FE8'/%3E%3Cpath d='M18 22h28v24a4 4 0 0 1-4 4H22a4 4 0 0 1-4-4z' fill='none' stroke='white' stroke-width='5' stroke-linejoin='round'/%3E%3Cpath d='M24 22v-4a8 8 0 0 1 16 0v4' fill='none' stroke='white' stroke-width='5'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --ink:#1A1726; --muted:#5F5A6B; --paper:#FFFFFF; --wash:#F3F1FC; --line:rgba(26,23,38,.10);
+  --violet:#5B4FE8; --violet-2:#8A7CFF; --green:#0B9C68; --red:#DA3B2F;
+  --night:#1E1E2E; --night-2:#2A2A3E; --night-ink:#F2F1F7; --night-muted:#B9B6C9;
+  --font: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    color-scheme: dark;
+    --ink:#F2F1F7; --muted:#B9B6C9; --paper:#1E1E2E; --wash:#252537; --line:rgba(255,255,255,.10);
+    --violet:#8F88FF; --violet-2:#9A8CFF; --green:#00D4AA; --red:#FF6B6B;
+    --night:#15151F; --night-2:#2A2A3E;
+  }
+}
+html[lang="ar"]{ --font: "Tajawal", "Poppins", system-ui, sans-serif; }
+*{ box-sizing:border-box; }
+html{ scroll-padding-top: env(safe-area-inset-top, 0px); }
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--font); font-size:1.0625rem; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+html[lang="ar"] body{ font-size:1.125rem; line-height:1.75; }
+a{ color:inherit; }
+:focus-visible{ outline:3px solid var(--violet-2); outline-offset:3px; border-radius:6px; }
+.wrap{ width:min(1080px, 100% - 2.5rem); margin-inline:auto; }
+
+/* ---------- top / hero (always the app's night palette) ---------- */
+.top{
+  background:var(--night); color:var(--night-ink);
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.bar{ display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:1.25rem 0; }
+.brand{ display:flex; align-items:center; gap:.6rem; text-decoration:none; font-weight:600; font-size:1.15rem; letter-spacing:-.01em; }
+.brand svg{ flex:none; }
+.lang{
+  font:inherit; font-size:.95rem; font-weight:500; color:var(--night-ink);
+  background:transparent; border:1px solid rgba(255,255,255,.22); border-radius:999px;
+  padding:.4rem 1rem; cursor:pointer;
+}
+.lang:hover{ background:rgba(255,255,255,.08); }
+.lang [data-ar-font]{ font-family:"Tajawal", sans-serif; }
+
+.hero{ display:grid; grid-template-columns: 1.1fr .9fr; gap:3rem; align-items:center; padding:2.5rem 0 4.5rem; }
+.hero h1{
+  margin:0 0 1.25rem; font-weight:700; letter-spacing:-.025em;
+  font-size:clamp(2.4rem, 5.2vw, 4rem); line-height:1.05;
+}
+html[lang="ar"] .hero h1{ letter-spacing:0; line-height:1.25; font-weight:800; }
+.hero h1 span{ display:block; }
+.hero p.lede{ margin:0 0 2rem; max-width:34ch; font-size:1.15rem; color:var(--night-muted); }
+.cta{ display:flex; flex-wrap:wrap; gap:1rem; align-items:center; }
+.play{
+  display:inline-flex; align-items:center; gap:.7rem; text-decoration:none;
+  background:#FFFFFF; color:#1A1726; border-radius:14px; padding:.8rem 1.3rem;
+  font-weight:600; font-size:1rem;
+}
+.play:hover{ background:#ECEAFB; }
+.play small{ display:block; font-weight:400; font-size:.75rem; opacity:.7; line-height:1.2; }
+.play b{ display:block; font-weight:600; line-height:1.2; }
+.note{ font-size:.9rem; color:var(--night-muted); }
+
+/* ---------- the phone: the one bold thing ---------- */
+.phone{
+  justify-self:center; width:min(300px, 100%); aspect-ratio: 9 / 18.5;
+  background:#252537; border-radius:40px; padding:14px;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 30px 80px -20px rgba(91,79,232,.55);
+}
+.screen{ height:100%; border-radius:28px; background:#1E1E2E; overflow:hidden; display:flex; flex-direction:column; padding:18px 16px; gap:14px; color:#F2F1F7; font-size:.78rem; }
+.s-head{ display:flex; justify-content:space-between; align-items:center; color:#B9B6C9; font-size:.72rem; }
+.balance{
+  border-radius:20px; padding:16px; color:#fff;
+  background: linear-gradient(135deg, #6C63FF, #9A8CFF);
+}
+.balance .lbl{ opacity:.85; font-size:.72rem; }
+.balance .amt{ font-size:1.55rem; font-weight:600; letter-spacing:-.01em; direction:ltr; unicode-bidi:isolate; display:block; text-align:start; }
+.balance .sub{ display:flex; gap:12px; margin-top:8px; font-size:.7rem; opacity:.95; }
+.wallets{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.wallet{ background:#2A2A3E; border-radius:14px; padding:10px; }
+.wallet .n{ color:#B9B6C9; font-size:.68rem; }
+.wallet .v{ font-weight:600; direction:ltr; unicode-bidi:isolate; display:block; text-align:start; }
+.list{ display:flex; flex-direction:column; gap:2px; }
+.list h3{ margin:0 0 4px; font-size:.72rem; font-weight:500; color:#B9B6C9; }
+.row{ display:flex; align-items:center; gap:10px; padding:7px 0; border-bottom:1px solid rgba(255,255,255,.05); }
+.row .ic{ width:28px; height:28px; border-radius:50%; display:grid; place-items:center; background:#333742; font-size:.85rem; flex:none; }
+.row .t{ flex:1; min-width:0; }
+.row .t small{ display:block; color:#8E8AA0; font-size:.64rem; }
+.row .m{ font-weight:600; direction:ltr; unicode-bidi:isolate; }
+.row .m.out{ color:#FF6B6B; } .row .m.in{ color:#00D4AA; }
+
+/* ---------- sections ---------- */
+section{ padding:5rem 0; }
+section h2{ margin:0 0 .75rem; font-size:clamp(1.7rem, 3vw, 2.3rem); line-height:1.15; letter-spacing:-.02em; font-weight:600; }
+html[lang="ar"] section h2{ letter-spacing:0; line-height:1.4; font-weight:700; }
+section .intro{ margin:0 0 2.5rem; max-width:60ch; color:var(--muted); }
+
+.promise{ background:var(--wash); }
+.promise ul{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(3, 1fr); gap:2.5rem; }
+.promise li{ border-top:3px solid var(--violet); padding-top:1rem; }
+.promise li b{ display:block; font-size:1.2rem; font-weight:600; margin-bottom:.35rem; }
+.promise li span{ color:var(--muted); }
+
+.features{ display:grid; grid-template-columns:repeat(2, 1fr); gap:1.75rem 3rem; margin:0; padding:0; list-style:none; }
+.features li{ display:grid; grid-template-columns:2.5rem 1fr; gap:1rem; align-items:start; }
+.features svg{ width:2.5rem; height:2.5rem; padding:.55rem; border-radius:12px; background:var(--wash); color:var(--violet); }
+.features b{ display:block; font-weight:600; }
+.features span{ color:var(--muted); font-size:1rem; }
+
+.plans{ display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+.plan{ border:1px solid var(--line); border-radius:20px; padding:1.75rem; }
+.plan.plus{ border:2px solid var(--violet); }
+.plan h3{ margin:0 0 .25rem; font-size:1.25rem; font-weight:600; }
+.plan p{ margin:0 0 1rem; color:var(--muted); }
+.plan ul{ margin:0; padding-inline-start:1.2rem; }
+.plan li{ margin:.35rem 0; }
+.plans + .fine{ margin-top:1rem; font-size:.95rem; color:var(--muted); }
+
+/* ---------- footer ---------- */
+footer{ background:var(--night); color:var(--night-ink); padding:3.5rem 0 2.5rem; }
+.foot{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:2rem; align-items:flex-start; }
+.foot h2{ margin:0 0 1rem; font-size:1.3rem; font-weight:600; }
+.social{ display:flex; gap:.75rem; }
+.social a{
+  width:48px; height:48px; border-radius:50%; display:grid; place-items:center;
+  border:1px solid rgba(255,255,255,.2); color:var(--night-ink);
+}
+.social a:hover{ background:rgba(255,255,255,.08); }
+.links{ display:flex; flex-direction:column; gap:.5rem; }
+.links a{ color:var(--night-muted); text-decoration:none; }
+.links a:hover{ color:var(--night-ink); text-decoration:underline; }
+.copy{ margin-top:2.5rem; font-size:.85rem; color:var(--night-muted); }
+
+@media (max-width: 860px){
+  .hero{ grid-template-columns:1fr; gap:2.5rem; padding-bottom:3.5rem; }
+  .promise ul, .features, .plans{ grid-template-columns:1fr; }
+  section{ padding:3.5rem 0; }
+}
+@media (prefers-reduced-motion: no-preference){
+  .phone{ animation: rise .7s cubic-bezier(.2,.7,.2,1) both .1s; }
+  @keyframes rise{ from{ transform:translateY(24px); opacity:0; } to{ transform:none; opacity:1; } }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="bar">
+      <a class="brand" href="#" aria-label="PocketKeep">
+        <svg width="34" height="34" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#5B4FE8"/><path d="M18 22h28v24a4 4 0 0 1-4 4H22a4 4 0 0 1-4-4z" fill="none" stroke="#fff" stroke-width="5" stroke-linejoin="round"/><path d="M24 22v-4a8 8 0 0 1 16 0v4" fill="none" stroke="#fff" stroke-width="5"/></svg>
+        PocketKeep
+      </a>
+      <button class="lang" id="langBtn" type="button"></button>
+    </div>
+
+    <div class="hero">
+      <div>
+        <h1><span data-i="h1a"></span><span data-i="h1b"></span></h1>
+        <p class="lede" data-i="lede"></p>
+        <div class="cta">
+          <a class="play" href="https://play.google.com/store/apps/details?id=app.pocketkeep" rel="noopener">
+            <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2.8v18.4c0 .5.5.8 1 .6l15.4-8.9c.5-.3.5-1 0-1.3L5 2.2c-.5-.3-1 .1-1 .6z" fill="#5B4FE8"/></svg>
+            <span><small data-i="playSmall"></small><b>Google Play</b></span>
+          </a>
+          <span class="note" data-i="playNote"></span>
+        </div>
+      </div>
+
+      <div class="phone" aria-hidden="true">
+        <div class="screen">
+          <div class="s-head"><span data-i="mHello"></span><span>9:41</span></div>
+          <div class="balance">
+            <div class="lbl" data-i="mTotal"></div>
+            <span class="amt">$2,480.50</span>
+            <div class="sub"><span data-i="mIn"></span><span data-i="mOut"></span></div>
+          </div>
+          <div class="wallets">
+            <div class="wallet"><div class="n" data-i="mCash"></div><span class="v">IQD 640,000</span></div>
+            <div class="wallet"><div class="n" data-i="mBank"></div><span class="v">$1,992.10</span></div>
+          </div>
+          <div class="list">
+            <h3 data-i="mRecent"></h3>
+            <div class="row"><span class="ic">🛒</span><span class="t"><span data-i="mGroceries"></span><small data-i="mToday"></small></span><span class="m out">-$32.40</span></div>
+            <div class="row"><span class="ic">💼</span><span class="t"><span data-i="mSalary"></span><small data-i="mYesterday"></small></span><span class="m in">+$1,800.00</span></div>
+            <div class="row"><span class="ic">🚕</span><span class="t"><span data-i="mTaxi"></span><small data-i="mYesterday"></small></span><span class="m out">-IQD 6,000</span></div>
+            <div class="row"><span class="ic">☕</span><span class="t"><span data-i="mCoffee"></span><small data-i="mMon"></small></span><span class="m out">-€3.80</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="promise">
+    <div class="wrap">
+      <h2 data-i="pTitle"></h2>
+      <p class="intro" data-i="pIntro"></p>
+      <ul>
+        <li><b data-i="p1"></b><span data-i="p1d"></span></li>
+        <li><b data-i="p2"></b><span data-i="p2d"></span></li>
+        <li><b data-i="p3"></b><span data-i="p3d"></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2 data-i="fTitle"></h2>
+      <p class="intro" data-i="fIntro"></p>
+      <ul class="features">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18M16 15h2"/></svg><div><b data-i="f1"></b><span data-i="f1d"></span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><div><b data-i="f2"></b><span data-i="f2d"></span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><div><b data-i="f3"></b><span data-i="f3d"></span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3L20 9M20 4v5h-5M20 12a8 8 0 0 1-14 5.3L4 15M4 20v-5h5"/></svg><div><b data-i="f4"></b><span data-i="f4d"></span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><div><b data-i="f5"></b><span data-i="f5d"></span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg><div><b data-i="f6"></b><span data-i="f6d"></span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><path d="M17 14v6M14 17h6"/></svg><div><b data-i="f7"></b><span data-i="f7d"></span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h9M8.5 3v2M6 5c0 4 3 7 7 8M11 5c0 4-3 8-7 9M13 21l4-9 4 9M14.5 18h5"/></svg><div><b data-i="f8"></b><span data-i="f8d"></span></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="promise">
+    <div class="wrap">
+      <h2 data-i="plTitle"></h2>
+      <p class="intro" data-i="plIntro"></p>
+      <div class="plans">
+        <div class="plan">
+          <h3 data-i="freeT"></h3>
+          <p data-i="freeD"></p>
+          <ul><li data-i="free1"></li><li data-i="free2"></li><li data-i="free3"></li><li data-i="free4"></li></ul>
+        </div>
+        <div class="plan plus">
+          <h3>PocketKeep PLUS</h3>
+          <p data-i="plusD"></p>
+          <ul><li data-i="plus1"></li><li data-i="plus2"></li><li data-i="plus3"></li><li data-i="plus4"></li><li data-i="plus5"></li></ul>
+        </div>
+      </div>
+      <p class="fine" data-i="plFine"></p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <h2 data-i="follow"></h2>
+        <div class="social">
+          <a href="https://www.tiktok.com/@pocket_keep" rel="noopener" aria-label="TikTok" title="TikTok">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 3h3a4.5 4.5 0 0 0 4 4v3a7.5 7.5 0 0 1-4-1.2V15a6 6 0 1 1-6-6h.5v3.1A3 3 0 1 0 14 15z"/></svg>
+          </a>
+          <a href="https://www.instagram.com/pocket_keep/" rel="noopener" aria-label="Instagram" title="Instagram">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1.2" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href="https://www.facebook.com/people/PocketKeep/61595939319081/" rel="noopener" aria-label="Facebook" title="Facebook">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 21v-7.5H16l.4-3h-2.9V8.6c0-.9.3-1.5 1.5-1.5h1.5V4.4c-.3 0-1.2-.1-2.2-.1-2.2 0-3.8 1.4-3.8 3.9v2.3H8v3h2.5V21z"/></svg>
+          </a>
+        </div>
+      </div>
+      <nav class="links" aria-label="Links">
+        <a href="https://play.google.com/store/apps/details?id=app.pocketkeep" rel="noopener" data-i="lPlay"></a>
+        <a href="https://adistributor.github.io/pocketkeep-privacy/" data-i="lPrivacy"></a>
+        <a href="mailto:support.pocketkeep@gmail.com" data-i="lSupport"></a>
+      </nav>
+    </div>
+    <p class="copy" data-i="copy"></p>
+  </div>
+</footer>
+
+<script>
+const T = {
+  en: {
+    title: "PocketKeep — expense tracker that keeps your data on your phone",
+    langBtn: "العربية",
+    h1a: "Your money.", h1b: "On your phone. Nowhere else.",
+    lede: "PocketKeep is a simple expense tracker for Android. No account, no ads, and your records never leave your device.",
+    playSmall: "Get it on", playNote: "Free to start. Works offline.",
+    mHello: "Good morning", mTotal: "Total balance", mIn: "In  +$1,800.00", mOut: "Out  −$41.20",
+    mCash: "Cash", mBank: "Bank", mRecent: "Recent", mGroceries: "Groceries", mSalary: "Salary",
+    mTaxi: "Taxi", mCoffee: "Coffee", mToday: "Today", mYesterday: "Yesterday", mMon: "Monday",
+    pTitle: "Private by design, not by promise",
+    pIntro: "There is no PocketKeep server holding your finances, so there is nothing to leak, sell, or lose.",
+    p1: "No account", p1d: "Open the app and start. No email, no sign-up, no password to remember.",
+    p2: "Stays on your phone", p2d: "Your wallets, transactions and notes are stored on your device. Back them up to a file you keep.",
+    p3: "No ads", p3d: "No banners, no tracking, no selling your data. PLUS subscriptions pay for the app.",
+    fTitle: "Everything you need to see where your money goes",
+    fIntro: "Built for everyday spending in more than one currency.",
+    f1: "Wallets and accounts", f1d: "Cash, bank cards, savings. Group them into accounts and see one total.",
+    f2: "Any currency, offline", f2d: "Your local currency and any world currency, with exchange rates you set.",
+    f3: "Reports and insights", f3d: "Spending by category and by day, and notes on what changed since last month.",
+    f4: "Recurring bills and income", f4d: "Rent, salary, subscriptions: added for you on schedule.",
+    f5: "PIN and fingerprint lock", f5d: "Keep the app closed to anyone who picks up your phone.",
+    f6: "Backup and export", f6d: "Password-protected backup files, plus PDF and Excel reports.",
+    f7: "Home-screen widget", f7d: "See your balance without opening the app.",
+    f8: "10 languages", f8d: "Including full Arabic with right-to-left layout.",
+    plTitle: "Start free. Upgrade when you need more.",
+    plIntro: "The free version is complete for everyday tracking. PLUS is for people who manage more.",
+    freeT: "Free", freeD: "For one person's daily spending.",
+    free1: "2 open wallets", free2: "Unlimited transactions", free3: "Reports", free4: "No ads",
+    plusD: "For several wallets and the full picture.",
+    plus1: "As many wallets and accounts as you need", plus2: "All spending insights",
+    plus3: "Recurring bills and income without limits", plus4: "Password-protected backup and report export",
+    plus5: "Home-screen widget",
+    plFine: "Monthly and yearly plans. Prices are shown in the app in your currency.",
+    follow: "Follow PocketKeep",
+    lPlay: "PocketKeep on Google Play", lPrivacy: "Privacy policy", lSupport: "Contact support",
+    copy: "© 2026 A.Distributor. Google Play is a trademark of Google LLC."
+  },
+  ar: {
+    title: "PocketKeep — تطبيق لتتبع المصاريف يبقي بياناتك على هاتفك",
+    langBtn: "English",
+    h1a: "أموالك.", h1b: "على هاتفك، ولا مكان غيره.",
+    lede: "PocketKeep تطبيق بسيط لتتبع المصاريف على أندرويد. بلا حساب، وبلا إعلانات، وسجلاتك لا تغادر جهازك أبدًا.",
+    playSmall: "حمّله من", playNote: "تبدأ مجانًا، ويعمل دون إنترنت.",
+    mHello: "صباح الخير", mTotal: "الرصيد الإجمالي", mIn: "دخل +$1,800.00", mOut: "مصروف −$41.20",
+    mCash: "نقدًا", mBank: "البنك", mRecent: "آخر المعاملات", mGroceries: "بقالة", mSalary: "راتب",
+    mTaxi: "تاكسي", mCoffee: "قهوة", mToday: "اليوم", mYesterday: "أمس", mMon: "الاثنين",
+    pTitle: "الخصوصية في تصميمه، لا في وعوده",
+    pIntro: "لا يوجد خادم لـ PocketKeep يحتفظ بأموالك، فلا شيء يمكن أن يتسرّب أو يُباع أو يضيع.",
+    p1: "بلا حساب", p1d: "افتح التطبيق وابدأ. لا بريد إلكتروني، ولا تسجيل، ولا كلمة مرور تحفظها.",
+    p2: "يبقى على هاتفك", p2d: "محافظك ومعاملاتك وملاحظاتك محفوظة على جهازك. وانسخها احتياطيًا في ملف تحتفظ به أنت.",
+    p3: "بلا إعلانات", p3d: "لا إعلانات، ولا تتبّع، ولا بيع لبياناتك. اشتراكات PLUS هي ما يموّل التطبيق.",
+    fTitle: "كل ما تحتاجه لتعرف أين تذهب أموالك",
+    fIntro: "مصمَّم للمصاريف اليومية، وبأكثر من عملة.",
+    f1: "محافظ وحسابات", f1d: "النقد والبطاقات والمدخرات. اجمعها في حسابات وشاهد مجموعًا واحدًا.",
+    f2: "أي عملة، دون إنترنت", f2d: "عملتك المحلية وأي عملة في العالم، بأسعار صرف تحددها أنت.",
+    f3: "تقارير وملاحظات ذكية", f3d: "مصاريفك حسب الفئة وحسب اليوم، وما الذي تغيّر منذ الشهر الماضي.",
+    f4: "فواتير ودخل متكرر", f4d: "الإيجار والراتب والاشتراكات تُضاف تلقائيًا في موعدها.",
+    f5: "قفل بالرمز والبصمة", f5d: "لا يفتح التطبيق أحد يمسك هاتفك غيرك.",
+    f6: "نسخ احتياطي وتصدير", f6d: "ملفات نسخ احتياطي محمية بكلمة مرور، وتقارير PDF وExcel.",
+    f7: "أداة على الشاشة الرئيسية", f7d: "شاهد رصيدك دون أن تفتح التطبيق.",
+    f8: "10 لغات", f8d: "منها العربية كاملة، باتجاه من اليمين إلى اليسار.",
+    plTitle: "ابدأ مجانًا، وطوّر حين تحتاج المزيد.",
+    plIntro: "النسخة المجانية كاملة للتتبع اليومي. وPLUS لمن يدير أكثر.",
+    freeT: "مجاني", freeD: "لمصاريف شخص واحد اليومية.",
+    free1: "محفظتان مفتوحتان", free2: "معاملات بلا حدود", free3: "التقارير", free4: "بلا إعلانات",
+    plusD: "لعدة محافظ وللصورة الكاملة.",
+    plus1: "محافظ وحسابات بالعدد الذي تحتاجه", plus2: "كل الملاحظات الذكية عن مصاريفك",
+    plus3: "فواتير ودخل متكرر بلا حدود", plus4: "نسخ احتياطي محمي بكلمة مرور وتصدير التقارير",
+    plus5: "أداة الشاشة الرئيسية",
+    plFine: "خطط شهرية وسنوية. الأسعار تظهر داخل التطبيق بعملتك.",
+    follow: "تابع PocketKeep",
+    lPlay: "PocketKeep على Google Play", lPrivacy: "سياسة الخصوصية", lSupport: "تواصل مع الدعم",
+    copy: "© 2026 A.Distributor. ‏Google Play علامة تجارية لشركة Google LLC."
+  }
+};
+
+function pickInitial(){
+  try{
+    const q = new URLSearchParams(location.search).get("lang");
+    if (q === "ar" || q === "en") return q;
+    const saved = localStorage.getItem("pk-lang");
+    if (saved === "ar" || saved === "en") return saved;
+  }catch(e){}
+  return (navigator.language || "").toLowerCase().startsWith("ar") ? "ar" : "en";
+}
+
+function apply(lang){
+  const d = T[lang];
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+  document.title = d.title;
+  document.querySelectorAll("[data-i]").forEach(el => {
+    const k = el.getAttribute("data-i");
+    if (d[k] !== undefined) el.textContent = d[k];
+  });
+  const btn = document.getElementById("langBtn");
+  btn.textContent = d.langBtn;
+  btn.style.fontFamily = lang === "ar" ? "Poppins, sans-serif" : "Tajawal, sans-serif";
+  btn.setAttribute("lang", lang === "ar" ? "en" : "ar");
+  btn.setAttribute("aria-label", lang === "ar" ? "Switch to English" : "التبديل إلى العربية");
+  try{ localStorage.setItem("pk-lang", lang); }catch(e){}
+}
+
+let current = pickInitial();
+apply(current);
+document.getElementById("langBtn").addEventListener("click", () => {
+  current = current === "ar" ? "en" : "ar";
+  apply(current);
+});
+</script>
+</body>
+</html>
